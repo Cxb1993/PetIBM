@@ -409,7 +409,7 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-include $(PETSC_DIR)/conf/variables
+include $(PETSC_DIR)/lib/petsc/conf/variables
 
 examples:
 	@echo "Copying examples folders..."
