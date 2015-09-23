@@ -1,4 +1,4 @@
-include $(PETSC_DIR)/conf/variables
+include @PETSC_CONF_PATH@/variables
 
 bin_PROGRAMS = diffusiveTermTest2d \
 							 diffusiveTermTest3d

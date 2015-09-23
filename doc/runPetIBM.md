@@ -29,10 +29,15 @@ Visit the [PETSc Installation](http://www.mcs.anl.gov/petsc/documentation/instal
 
 ## Run using a `make` rule
 
-If you want to run the code from within a `make` rule, include the following statements at the beginning of your makefile:
+If you want to run the code from within a `make` rule, include the following statements at the beginning of your makefile (PETSc 3.5):
 
-    include $(PETSC_DIR)/conf/variables
-    include $(PETSC_DIR)/conf/rules
+    include $(PETSC_DIR)/$(PETSC_ARCH)/conf/variables
+    include $(PETSC_DIR)/$(PETSC_ARCH)/conf/rules
+
+or, for PETSc 3.6,
+
+    include $(PETSC_DIR)/$(PETSC_ARCH)/lib/petsc/conf/variables
+    include $(PETSC_DIR)/$(PETSC_ARCH)/lib/petsc/conf/rules
 
 And use `$(MPIEXEC)` to run in parallel. This variable stores the correct path of the `mpiexec` that PETSc was configured with. Write your own `make` rule:
 

@@ -628,6 +628,7 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 PACKAGE_LIBS
 PACKAGE_CPPFLAGS
+PETSC_CONF_PATH
 PETSC_ARCH
 PETSC_DIR
 LIBOBJS
@@ -6294,14 +6295,19 @@ PETSC_DIR=$PETSC_DIR
 PETSC_ARCH=$PETSC_ARCH
 
 
+PETSC_CONF_PATH=`find ${PETSC_DIR}/${PETSC_ARCH} -name conf`
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: using PETSC_DIR: ${PETSC_DIR}" >&5
 $as_echo "$as_me: using PETSC_DIR: ${PETSC_DIR}" >&6;}
 { $as_echo "$as_me:${as_lineno-$LINENO}: using PETSC_ARCH: ${PETSC_ARCH}" >&5
 $as_echo "$as_me: using PETSC_ARCH: ${PETSC_ARCH}" >&6;}
+{ $as_echo "$as_me:${as_lineno-$LINENO}: using PETSC_CONF_PATH: ${PETSC_CONF_PATH}" >&5
+$as_echo "$as_me: using PETSC_CONF_PATH: ${PETSC_CONF_PATH}" >&6;}
 
-PETSC_CC_INCLUDES=`grep "PETSC_CC_INCLUDES =" $PETSC_DIR/$PETSC_ARCH/lib/petsc/conf/petscvariables | sed -e 's/.*=//' -e 's/^ \t*//'`
-PETSC_EXTERNAL_LIB_BASIC=`grep "PETSC_EXTERNAL_LIB_BASIC =" $PETSC_DIR/$PETSC_ARCH/lib/petsc/conf/petscvariables | sed -e 's/.*=//' -e 's/^ \t*//'`
-PETSC_WITH_EXTERNAL_LIB=`grep "PETSC_WITH_EXTERNAL_LIB =" $PETSC_DIR/$PETSC_ARCH/lib/petsc/conf/petscvariables | sed -e 's/.*=//' -e 's/^ \t*//'`
+PETSC_CC_INCLUDES=`grep "PETSC_CC_INCLUDES =" ${PETSC_CONF_PATH}/petscvariables | sed -e 's/.*=//' -e 's/^ \t*//'`
+PETSC_EXTERNAL_LIB_BASIC=`grep "PETSC_EXTERNAL_LIB_BASIC =" ${PETSC_CONF_PATH}/petscvariables | sed -e 's/.*=//' -e 's/^ \t*//'`
+PETSC_WITH_EXTERNAL_LIB=`grep "PETSC_WITH_EXTERNAL_LIB =" ${PETSC_CONF_PATH}/petscvariables | sed -e 's/.*=//' -e 's/^ \t*//'`
 
 CPPFLAGS="$PETSC_CC_INCLUDES $CPPFLAGS"
 
@@ -6330,7 +6336,7 @@ int
 main ()
 {
 
-#if ((PETSC_VERSION_GE(3, 6, 1)) || !PETSC_VERSION_RELEASE)
+#if (PETSC_VERSION_GE(3, 5, 0) || !PETSC_VERSION_RELEASE)
 #else
 asdf
 #endif
@@ -6348,7 +6354,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: ${PETSC_VERSION_VALID}" >&5
 $as_echo "${PETSC_VERSION_VALID}" >&6; }
 if test "$PETSC_VERSION_VALID" = no; then
-  as_fn_error $? "invalid PETSc version detected; please use PETSc 3.5" "$LINENO" 5
+  as_fn_error $? "invalid PETSc version detected; please use PETSc version greater than 3.5" "$LINENO" 5
 fi
 
 PACKAGE_CPPFLAGS="$PETSC_CC_INCLUDES $PACKAGE_CPPFLAGS"
@@ -7889,6 +7895,8 @@ LIBS: ${LIBS}
 PETSC_DIR: ${PETSC_DIR}
 PETSC_ARCH: ${PETSC_ARCH}
 
+PETSC_CONF_PATH: ${PETSC_CONF_PATH}
+
 Now type 'make [<target>]'
   where the optional [<target>] is:
     all            - build all binaries
@@ -7911,6 +7919,8 @@ LIBS: ${LIBS}
 
 PETSC_DIR: ${PETSC_DIR}
 PETSC_ARCH: ${PETSC_ARCH}
+
+PETSC_CONF_PATH: ${PETSC_CONF_PATH}
 
 Now type 'make [<target>]'
   where the optional [<target>] is:

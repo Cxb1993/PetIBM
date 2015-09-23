@@ -88,6 +88,8 @@ LIBS: ${LIBS}
 PETSC_DIR: ${PETSC_DIR}
 PETSC_ARCH: ${PETSC_ARCH}
 
+PETSC_CONF_PATH: ${PETSC_CONF_PATH}
+
 Now type 'make @<:@<target>@:>@'
   where the optional @<:@<target>@:>@ is:
     all            - build all binaries

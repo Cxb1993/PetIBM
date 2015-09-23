@@ -1,4 +1,4 @@
-include $(PETSC_DIR)/conf/variables
+include @PETSC_CONF_PATH@/variables
 
 bin_PROGRAMS = convectiveTermTest2d \
 							 convectiveTermTest3d
