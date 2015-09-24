@@ -626,6 +626,9 @@ ac_header_list=
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
+AMGX_DIR
+PACKAGE_LDFLAGS
+CUDA65_DIR
 PACKAGE_LIBS
 PACKAGE_CPPFLAGS
 PETSC_CONF_PATH
@@ -755,7 +758,9 @@ CXXFLAGS
 CCC
 CXXCPP
 PETSC_DIR
-PETSC_ARCH'
+PETSC_ARCH
+CUDA65_DIR
+AMGX_DIR'
 
 
 # Initialize some variables set by options.
@@ -1400,6 +1405,8 @@ Some influential environment variables:
   CXXCPP      C++ preprocessor
   PETSC_DIR   location of the PETSc installation.
   PETSC_ARCH  configuration of PETSc, located in ${PETSC_DIR}/${PETSC_ARCH}.
+  CUDA65_DIR  location of the CUDA 6.5 installation.
+  AMGX_DIR    location of the AmgX installation.
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -6376,6 +6383,487 @@ CONTRIB_LIBS=$PACKAGE_save_CONTRIB_LIBS
 echo
 
 
+
+echo
+echo "=================================="
+echo "Configuring required package CUDA 6.5"
+echo "=================================="
+
+
+PACKAGE_save_CFLAGS=$CFLAGS
+PACKAGE_save_CPPFLAGS=$CPPFLAGS
+PACKAGE_save_CXXFLAGS=$CXXFLAGS
+PACKAGE_save_FCFLAGS=$FCFLAGS
+PACKAGE_save_LDFLAGS=$LDFLAGS
+PACKAGE_save_FCLIBS=$FCLIBS
+PACKAGE_save_CONTRIB_LIBS=$CONTRIB_LIBS
+CFLAGS="$PACKAGE_CFLAGS $CFLAGS"
+CPPFLAGS="$PACKAGE_CPPFLAGS $CPPFLAGS"
+CXXFLAGS="$PACKAGE_CXXFLAGS $CXXFLAGS"
+FCFLAGS="$PACKAGE_FCFLAGS $FCFLAGS"
+LDFLAGS="$PACKAGE_LDFLAGS $LDFLAGS"
+LIBS="$PACKAGE_LIBS $LIBS"
+FCLIBS="$PACKAGE_FCLIBS $FCLIBS"
+CONTRIB_LIBS="$PACKAGE_CONTRIB_LIBS $CONTRIB_LIBS"
+
+
+
+CUDA65_DIR=$CUDA65_DIR
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: using CUDA65_DIR: ${CUDA65_DIR}" >&5
+$as_echo "$as_me: using CUDA65_DIR: ${CUDA65_DIR}" >&6;}
+
+CUDA65_INC_PATH=-I${CUDA65_DIR}/include
+CUDA65_LIB_PATH=-L${CUDA65_DIR}/lib64
+CUDA65_LIBRARY=-lcudart\ -lcublas\ -lcusparse
+
+CPPFLAGS="$CUDA65_INC_PATH $CPPFLAGS"
+
+LDFLAGS="$CUDA65_LIB_PATH $LDFLAGS"
+
+LIBS="$CUDA65_LIBRARY_PATH $LIBS"
+
+
+ac_fn_cxx_check_header_mongrel "$LINENO" "cuda_runtime.h" "ac_cv_header_cuda_runtime_h" "$ac_includes_default"
+if test "x$ac_cv_header_cuda_runtime_h" = xyes; then :
+
+else
+  as_fn_error $? "could not find header file cuda_runtime.h" "$LINENO" 5
+fi
+
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for CUDA version" >&5
+$as_echo_n "checking for CUDA version... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <cuda_runtime.h>
+
+#define CUDART_VERSION_EQ65 (CUDART_VERSION==6050)
+
+int
+main ()
+{
+
+#if (CUDART_VERSION_EQ65)
+#else
+asdf
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  CUDART_VERSION_VALID=yes
+else
+  CUDART_VERSION_VALID=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${CUDART_VERSION_VALID}" >&5
+$as_echo "${CUDART_VERSION_VALID}" >&6; }
+if test "$CUDART_VERSION_VALID" = no; then
+  as_fn_error $? "invalid CUDA version detected; please use CUDA equal to 6.5" "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for cudaRuntimeGetVersion in -lcudart" >&5
+$as_echo_n "checking for cudaRuntimeGetVersion in -lcudart... " >&6; }
+if ${ac_cv_lib_cudart_cudaRuntimeGetVersion+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcudart  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char cudaRuntimeGetVersion ();
+int
+main ()
+{
+return cudaRuntimeGetVersion ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_cudart_cudaRuntimeGetVersion=yes
+else
+  ac_cv_lib_cudart_cudaRuntimeGetVersion=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_cudart_cudaRuntimeGetVersion" >&5
+$as_echo "$ac_cv_lib_cudart_cudaRuntimeGetVersion" >&6; }
+if test "x$ac_cv_lib_cudart_cudaRuntimeGetVersion" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBCUDART 1
+_ACEOF
+
+  LIBS="-lcudart $LIBS"
+
+else
+  as_fn_error $? "could not find library cudart" "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for cublasGetVersion in -lcublas" >&5
+$as_echo_n "checking for cublasGetVersion in -lcublas... " >&6; }
+if ${ac_cv_lib_cublas_cublasGetVersion+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcublas  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char cublasGetVersion ();
+int
+main ()
+{
+return cublasGetVersion ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_cublas_cublasGetVersion=yes
+else
+  ac_cv_lib_cublas_cublasGetVersion=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_cublas_cublasGetVersion" >&5
+$as_echo "$ac_cv_lib_cublas_cublasGetVersion" >&6; }
+if test "x$ac_cv_lib_cublas_cublasGetVersion" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBCUBLAS 1
+_ACEOF
+
+  LIBS="-lcublas $LIBS"
+
+else
+  as_fn_error $? "could not find library cublas" "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for cusparseGetVersion in -lcusparse" >&5
+$as_echo_n "checking for cusparseGetVersion in -lcusparse... " >&6; }
+if ${ac_cv_lib_cusparse_cusparseGetVersion+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcusparse  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char cusparseGetVersion ();
+int
+main ()
+{
+return cusparseGetVersion ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_cusparse_cusparseGetVersion=yes
+else
+  ac_cv_lib_cusparse_cusparseGetVersion=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_cusparse_cusparseGetVersion" >&5
+$as_echo "$ac_cv_lib_cusparse_cusparseGetVersion" >&6; }
+if test "x$ac_cv_lib_cusparse_cusparseGetVersion" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBCUSPARSE 1
+_ACEOF
+
+  LIBS="-lcusparse $LIBS"
+
+else
+  as_fn_error $? "could not find library cusparse" "$LINENO" 5
+fi
+
+
+PACKAGE_CPPFLAGS="$CUDA65_INC_PATH $PACKAGE_CPPFLAGS"
+
+PACKAGE_LDFLAGS="$CUDA65_LIB_PATH $PACKAGE_LDFLAGS"
+
+PACKAGE_LIBS="$CUDA65_LIBRARY $PACKAGE_LIBS"
+
+
+
+CFLAGS=$PACKAGE_save_CFLAGS
+CPPFLAGS=$PACKAGE_save_CPPFLAGS
+CXXFLAGS=$PACKAGE_save_CXXFLAGS
+FCFLAGS=$PACKAGE_save_FCFLAGS
+LDFLAGS=$PACKAGE_save_LDFLAGS
+LIBS=$PACKAGE_save_LIBS
+FCLIBS=$PACKAGE_save_FCLIBS
+CONTRIB_LIBS=$PACKAGE_save_CONTRIB_LIBS
+
+
+echo
+
+
+
+echo
+echo "=================================="
+echo "Configuring required package AmgX"
+echo "=================================="
+
+
+PACKAGE_save_CFLAGS=$CFLAGS
+PACKAGE_save_CPPFLAGS=$CPPFLAGS
+PACKAGE_save_CXXFLAGS=$CXXFLAGS
+PACKAGE_save_FCFLAGS=$FCFLAGS
+PACKAGE_save_LDFLAGS=$LDFLAGS
+PACKAGE_save_FCLIBS=$FCLIBS
+PACKAGE_save_CONTRIB_LIBS=$CONTRIB_LIBS
+CFLAGS="$PACKAGE_CFLAGS $CFLAGS"
+CPPFLAGS="$PACKAGE_CPPFLAGS $CPPFLAGS"
+CXXFLAGS="$PACKAGE_CXXFLAGS $CXXFLAGS"
+FCFLAGS="$PACKAGE_FCFLAGS $FCFLAGS"
+LDFLAGS="$PACKAGE_LDFLAGS $LDFLAGS"
+LIBS="$PACKAGE_LIBS $LIBS"
+FCLIBS="$PACKAGE_FCLIBS $FCLIBS"
+CONTRIB_LIBS="$PACKAGE_CONTRIB_LIBS $CONTRIB_LIBS"
+
+
+
+AMGX_DIR=$AMGX_DIR
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: using AMGX_DIR: ${AMGX_DIR}" >&5
+$as_echo "$as_me: using AMGX_DIR: ${AMGX_DIR}" >&6;}
+
+AMGX_INC_PATH=-I`find ${AMGX_DIR} -name amgx_c.h | sed -e 's/\/amgx_c.h//g'`
+AMGX_LIB_PATH=-L`find ${AMGX_DIR} -name libamgxsh.so | sed -e 's/\/libamgxsh.so//g'`
+AMGX_LIBRARY=-lamgxsh
+
+CPPFLAGS="$AMGX_INC_PATH $CPPFLAGS"
+
+LDFLAGS="$AMGX_LIB_PATH $LDFLAGS"
+
+LIBS="$AMGX_LIBRARY $LIBS"
+
+
+ac_fn_cxx_check_header_mongrel "$LINENO" "amgx_c.h" "ac_cv_header_amgx_c_h" "$ac_includes_default"
+if test "x$ac_cv_header_amgx_c_h" = xyes; then :
+
+else
+  as_fn_error $? "could not find header file amgx_c.h" "$LINENO" 5
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for AMGX_initialize in -lamgxsh" >&5
+$as_echo_n "checking for AMGX_initialize in -lamgxsh... " >&6; }
+if ${ac_cv_lib_amgxsh_AMGX_initialize+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lamgxsh  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char AMGX_initialize ();
+int
+main ()
+{
+return AMGX_initialize ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_amgxsh_AMGX_initialize=yes
+else
+  ac_cv_lib_amgxsh_AMGX_initialize=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_amgxsh_AMGX_initialize" >&5
+$as_echo "$ac_cv_lib_amgxsh_AMGX_initialize" >&6; }
+if test "x$ac_cv_lib_amgxsh_AMGX_initialize" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBAMGXSH 1
+_ACEOF
+
+  LIBS="-lamgxsh $LIBS"
+
+else
+  as_fn_error $? "could not find library amgxsh" "$LINENO" 5
+fi
+
+
+PACKAGE_CPPFLAGS="$AMGX_INC_PATH $PACKAGE_CPPFLAGS"
+
+PACKAGE_LDFLAGS="$AMGX_LIB_PATH $PACKAGE_LDFLAGS"
+
+PACKAGE_LIBS="$AMGX_LIBRARY $PACKAGE_LIBS"
+
+
+
+CFLAGS=$PACKAGE_save_CFLAGS
+CPPFLAGS=$PACKAGE_save_CPPFLAGS
+CXXFLAGS=$PACKAGE_save_CXXFLAGS
+FCFLAGS=$PACKAGE_save_FCFLAGS
+LDFLAGS=$PACKAGE_save_LDFLAGS
+LIBS=$PACKAGE_save_LIBS
+FCLIBS=$PACKAGE_save_FCLIBS
+CONTRIB_LIBS=$PACKAGE_save_CONTRIB_LIBS
+
+
+echo
+
+
+
+echo
+echo "=================================="
+echo "Check whether the version of OpenMPI is 1.8"
+echo "=================================="
+
+
+PACKAGE_save_CFLAGS=$CFLAGS
+PACKAGE_save_CPPFLAGS=$CPPFLAGS
+PACKAGE_save_CXXFLAGS=$CXXFLAGS
+PACKAGE_save_FCFLAGS=$FCFLAGS
+PACKAGE_save_LDFLAGS=$LDFLAGS
+PACKAGE_save_FCLIBS=$FCLIBS
+PACKAGE_save_CONTRIB_LIBS=$CONTRIB_LIBS
+CFLAGS="$PACKAGE_CFLAGS $CFLAGS"
+CPPFLAGS="$PACKAGE_CPPFLAGS $CPPFLAGS"
+CXXFLAGS="$PACKAGE_CXXFLAGS $CXXFLAGS"
+FCFLAGS="$PACKAGE_FCFLAGS $FCFLAGS"
+LDFLAGS="$PACKAGE_LDFLAGS $LDFLAGS"
+LIBS="$PACKAGE_LIBS $LIBS"
+FCLIBS="$PACKAGE_FCLIBS $FCLIBS"
+CONTRIB_LIBS="$PACKAGE_CONTRIB_LIBS $CONTRIB_LIBS"
+
+
+ac_fn_cxx_check_header_mongrel "$LINENO" "mpi.h" "ac_cv_header_mpi_h" "$ac_includes_default"
+if test "x$ac_cv_header_mpi_h" = xyes; then :
+
+else
+  as_fn_error $? "could not find header file mpi.h" "$LINENO" 5
+fi
+
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for OpenMPI" >&5
+$as_echo_n "checking for OpenMPI... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <mpi.h>
+
+
+int
+main ()
+{
+
+#ifdef OMPI_MPI_H
+#else
+asdf
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  IS_OMPI=yes
+else
+  IS_OMPI=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${IS_OMPI}" >&5
+$as_echo "${IS_OMPI}" >&6; }
+if test "$IS_OMPI" = no; then
+  as_fn_error $? "Must used OpenMPI, because AmgX only accept OpenMPI" "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for version of OpenMPI" >&5
+$as_echo_n "checking for version of OpenMPI... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <mpi.h>
+
+# define CHECK (OMPI_MAJOR_VERSION == 1 && OMPI_MINOR_VERSION == 8)
+
+int
+main ()
+{
+
+#if (CHECK)
+#else
+asdf
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  OMPI_VERSION=yes
+else
+  OMPI_VERSION=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${OMPI_VERSION}" >&5
+$as_echo "${OMPI_VERSION}" >&6; }
+if test "$OMPI_VERSION" = no; then
+  as_fn_error $? "OpenMPI is not 1.8!! AmgX currently only accept OpenMPI 1.8." "$LINENO" 5
+fi
+
+
+CFLAGS=$PACKAGE_save_CFLAGS
+CPPFLAGS=$PACKAGE_save_CPPFLAGS
+CXXFLAGS=$PACKAGE_save_CXXFLAGS
+FCFLAGS=$PACKAGE_save_FCFLAGS
+LDFLAGS=$PACKAGE_save_LDFLAGS
+LIBS=$PACKAGE_save_LIBS
+FCLIBS=$PACKAGE_save_FCLIBS
+CONTRIB_LIBS=$PACKAGE_save_CONTRIB_LIBS
+
+
+echo
+
+
 PACKAGE_save_CFLAGS=$CFLAGS
 PACKAGE_save_CPPFLAGS=$CPPFLAGS
 PACKAGE_save_CXXFLAGS=$CXXFLAGS
@@ -7894,8 +8382,17 @@ LIBS: ${LIBS}
 
 PETSC_DIR: ${PETSC_DIR}
 PETSC_ARCH: ${PETSC_ARCH}
-
 PETSC_CONF_PATH: ${PETSC_CONF_PATH}
+
+CUDA65_DIR: ${CUDA65_DIR}
+CUDA65_INC_PATH: ${CUDA65_INC_PATH}
+CUDA65_LIB_PATH: ${CUDA65_LIB_PATH}
+CUDA65_LIBRARY: ${CUDA65_LIBRARY}
+
+AMGX_DIR: ${AMGX_DIR}
+AMGX_INC_PATH: ${AMGX_INC_PATH}
+AMGX_LIB_PATH: ${AMGX_LIB_PATH}
+AMGX_LIBRARY: ${AMGX_LIBRARY}
 
 Now type 'make [<target>]'
   where the optional [<target>] is:
@@ -7919,8 +8416,17 @@ LIBS: ${LIBS}
 
 PETSC_DIR: ${PETSC_DIR}
 PETSC_ARCH: ${PETSC_ARCH}
-
 PETSC_CONF_PATH: ${PETSC_CONF_PATH}
+
+CUDA65_DIR: ${CUDA65_DIR}
+CUDA65_INC_PATH: ${CUDA65_INC_PATH}
+CUDA65_LIB_PATH: ${CUDA65_LIB_PATH}
+CUDA65_LIBRARY: ${CUDA65_LIBRARY}
+
+AMGX_DIR: ${AMGX_DIR}
+AMGX_INC_PATH: ${AMGX_INC_PATH}
+AMGX_LIB_PATH: ${AMGX_LIB_PATH}
+AMGX_LIBRARY: ${AMGX_LIBRARY}
 
 Now type 'make [<target>]'
   where the optional [<target>] is:

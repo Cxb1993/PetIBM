@@ -1246,6 +1246,9 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
+m4_include([m4/checkversion_ompi.m4])
+m4_include([m4/configure_amgx.m4])
+m4_include([m4/configure_cuda65.m4])
 m4_include([m4/configure_doxygen.m4])
 m4_include([m4/configure_petsc.m4])
 m4_include([m4/package_utilities.m4])

@@ -46,6 +46,9 @@ AC_CHECK_FUNCS([dup2 fchdir getcwd getpagesize gettimeofday memset mkdir munmap 
 # check for optional and required third-party libraries
 PACKAGE_INITIALIZE_ENVIRONMENT
 CONFIGURE_PETSC
+CONFIGURE_CUDA65
+CONFIGURE_AMGX
+CHECKVERSION_OPENMPI
 PACKAGE_SETUP_ENVIRONMENT
 
 # list of Makefiles to generate
@@ -87,8 +90,17 @@ LIBS: ${LIBS}
 
 PETSC_DIR: ${PETSC_DIR}
 PETSC_ARCH: ${PETSC_ARCH}
-
 PETSC_CONF_PATH: ${PETSC_CONF_PATH}
+
+CUDA65_DIR: ${CUDA65_DIR}
+CUDA65_INC_PATH: ${CUDA65_INC_PATH}
+CUDA65_LIB_PATH: ${CUDA65_LIB_PATH}
+CUDA65_LIBRARY: ${CUDA65_LIBRARY}
+
+AMGX_DIR: ${AMGX_DIR}
+AMGX_INC_PATH: ${AMGX_INC_PATH}
+AMGX_LIB_PATH: ${AMGX_LIB_PATH}
+AMGX_LIBRARY: ${AMGX_LIBRARY}
 
 Now type 'make @<:@<target>@:>@'
   where the optional @<:@<target>@:>@ is:
