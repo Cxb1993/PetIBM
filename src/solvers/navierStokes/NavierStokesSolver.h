@@ -11,6 +11,7 @@
 #include "CartesianMesh.h"
 #include "FlowDescription.h"
 #include "SimulationParameters.h"
+#include "AmgXSolver.hpp"
 
 #include <fstream>
 
@@ -40,6 +41,7 @@ public:
   Vec pMapping, uMapping, vMapping, wMapping;
 
   KSP ksp1, ksp2;
+  AmgXSolver amgx1, amgx2;
 
   Mat A,
       QT,

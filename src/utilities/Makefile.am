@@ -1,6 +1,7 @@
 noinst_LIBRARIES = libutilities.a
 
-libutilities_a_SOURCES = CartesianMesh.cpp \
+libutilities_a_SOURCES = AmgXSolver.cpp \
+			 CartesianMesh.cpp \
                          FlowDescription.cpp \
                          SimulationParameters.cpp \
                          Body.cpp \

@@ -127,6 +127,18 @@ PetscErrorCode NavierStokesSolver<dim>::initializeCommon()
   ierr = createKSPs(); CHKERRQ(ierr);
   ierr = setNullSpace(); CHKERRQ(ierr);
 
+  int   size, myRank;
+  std::string   amgx_config = parameters->directory + "/solversAmgXOptions.info";
+
+  ierr = MPI_Comm_size(PETSC_COMM_WORLD, &size); CHKERRQ(ierr);
+  ierr = MPI_Comm_rank(PETSC_COMM_WORLD, &myRank); CHKERRQ(ierr);
+
+  amgx1.initialize(PETSC_COMM_WORLD, size, myRank, "dDDI", amgx_config);
+  amgx2.initialize(PETSC_COMM_WORLD, size, myRank, "dDDI", amgx_config);
+
+  amgx1.setA(A);
+  amgx2.setA(QTBNQ);
+
   return 0;
 } // initializeCommon
 
@@ -194,20 +206,21 @@ PetscErrorCode NavierStokesSolver<dim>::solveIntermediateVelocity()
 
   ierr = PetscLogStagePush(stageSolveVelocitySystem); CHKERRQ(ierr);
 
-  ierr = KSPSolve(ksp1, rhs1, qStar); CHKERRQ(ierr);
+  //ierr = KSPSolve(ksp1, rhs1, qStar); CHKERRQ(ierr);
+  amgx1.solve(qStar, rhs1);
   
   ierr = PetscLogStagePop(); CHKERRQ(ierr);
 
-  KSPConvergedReason reason;
-  ierr = KSPGetConvergedReason(ksp1, &reason); CHKERRQ(ierr);
-  if (reason < 0)
-  {
-    ierr = PetscPrintf(PETSC_COMM_WORLD, "\n[time-step %d]", timeStep); CHKERRQ(ierr);
-    ierr = PetscPrintf(PETSC_COMM_WORLD,
-                       "\nERROR: velocity solver diverged due to reason: %d\n", 
-                       reason); CHKERRQ(ierr);
-    exit(0);
-  }
+  //KSPConvergedReason reason;
+  //ierr = KSPGetConvergedReason(ksp1, &reason); CHKERRQ(ierr);
+  //if (reason < 0)
+  //{
+  //  ierr = PetscPrintf(PETSC_COMM_WORLD, "\n[time-step %d]", timeStep); CHKERRQ(ierr);
+  //  ierr = PetscPrintf(PETSC_COMM_WORLD,
+  //                     "\nERROR: velocity solver diverged due to reason: %d\n", 
+  //                     reason); CHKERRQ(ierr);
+  //  exit(0);
+  //}
 
   return 0;
 } // solveIntermediateVelocity
@@ -243,20 +256,21 @@ PetscErrorCode NavierStokesSolver<dim>::solvePoissonSystem()
   
   ierr = PetscLogStagePush(stageSolvePoissonSystem); CHKERRQ(ierr);
 
-  ierr = KSPSolve(ksp2, rhs2, lambda); CHKERRQ(ierr);
+  //ierr = KSPSolve(ksp2, rhs2, lambda); CHKERRQ(ierr);
+  amgx2.solve(lambda, rhs2);
   
   ierr = PetscLogStagePop(); CHKERRQ(ierr);
   
-  KSPConvergedReason reason;
-  ierr = KSPGetConvergedReason(ksp2, &reason); CHKERRQ(ierr);
-  if (reason < 0)
-  {
-    ierr = PetscPrintf(PETSC_COMM_WORLD, "\n[time-step %d]", timeStep); CHKERRQ(ierr);
-    ierr = PetscPrintf(PETSC_COMM_WORLD,
-                       "\nERROR: Poisson solver diverged due to reason: %d\n", 
-                       reason); CHKERRQ(ierr);
-    exit(0);
-  }
+  //KSPConvergedReason reason;
+  //ierr = KSPGetConvergedReason(ksp2, &reason); CHKERRQ(ierr);
+  //if (reason < 0)
+  //{
+  //  ierr = PetscPrintf(PETSC_COMM_WORLD, "\n[time-step %d]", timeStep); CHKERRQ(ierr);
+  //  ierr = PetscPrintf(PETSC_COMM_WORLD,
+  //                     "\nERROR: Poisson solver diverged due to reason: %d\n", 
+  //                     reason); CHKERRQ(ierr);
+  //  exit(0);
+  //}
 
   return 0;
 } // solvePoissonSystem
@@ -388,6 +402,10 @@ PetscErrorCode NavierStokesSolver<dim>::helpers()
 template <PetscInt dim>
 PetscErrorCode NavierStokesSolver<dim>::finalize()
 {
+
+  amgx1.finalize();
+  amgx2.finalize();
+
   PetscErrorCode ierr;
   
   // DM objects
