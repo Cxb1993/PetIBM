@@ -1,4 +1,4 @@
-include @PETSC_CONF_PATH@/variables
+include @PETSC_VARIABLES@
 
 PETIBM2D = $(top_builddir)/src/petibm2d
 PETIBM3D = $(top_builddir)/src/petibm3d

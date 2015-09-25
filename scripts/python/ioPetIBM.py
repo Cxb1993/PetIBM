@@ -9,9 +9,12 @@ import os
 import sys
 
 import numpy
-sys.path.append(os.path.join(os.environ['PETSC_DIR'], 'bin'))
-import PetscBinaryIO
-
+try:
+    sys.path.append(os.path.join(os.environ['PETSC_DIR'], 'bin'))
+    import PetscBinaryIO
+except:
+    sys.path.append(os.path.join(os.environ['PETSC_DIR'], 'bin/pythonscripts'))
+    import PetscBinaryIO
 
 class Field(object):
   """Contains information about a field (pressure for example)."""
