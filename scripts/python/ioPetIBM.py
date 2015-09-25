@@ -12,6 +12,7 @@ import numpy
 try:
     sys.path.append(os.path.join(os.environ['PETSC_DIR'], 'bin'))
     import PetscBinaryIO
+    from functools import reduce
 except:
     sys.path.append(os.path.join(os.environ['PETSC_DIR'], 'bin/pythonscripts'))
     import PetscBinaryIO
