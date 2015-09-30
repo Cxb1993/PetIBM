@@ -124,8 +124,8 @@ PetscErrorCode NavierStokesSolver<dim>::initializeCommon()
   ierr = generateA(); CHKERRQ(ierr);
   ierr = generateBNQ(); CHKERRQ(ierr);
   ierr = generateQTBNQ(); CHKERRQ(ierr);
-  ierr = createKSPs(); CHKERRQ(ierr);
   ierr = setNullSpace(); CHKERRQ(ierr);
+  ierr = createKSPs(); CHKERRQ(ierr);
 
   int   size, myRank;
   std::string   amgx_config = parameters->directory + "/solversAmgXOptions.info";
