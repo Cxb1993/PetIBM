@@ -21,7 +21,7 @@ PetscErrorCode NavierStokesSolver<dim>::setNullSpace()
         MatNullSpace nsp;
 	ierr = MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, NULL, &nsp); CHKERRQ(ierr);
         ierr = MatSetNullSpace(this->QTBNQ, nsp); CHKERRQ(ierr);
-	ierr = MatNullSpaceDestroy(&nsp);
+	ierr = MatNullSpaceDestroy(&nsp); CHKERRQ(ierr);
 
 	return 0;
 } // setNullSpace

@@ -23,7 +23,7 @@ PetscErrorCode TairaColoniusSolver<dim>::setNullSpace()
   MatNullSpace nsp;
   ierr = MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_FALSE, 1, &nullSpaceVec, &nsp); CHKERRQ(ierr);
   ierr = MatSetNullSpace(this->QTBNQ, nsp); CHKERRQ(ierr);
-  ierr = MatNullSpaceDestroy(&nsp);
+  ierr = MatNullSpaceDestroy(&nsp); CHKERRQ(ierr);
 
   return 0;
 } // setNullSpace
