@@ -124,8 +124,8 @@ PetscErrorCode NavierStokesSolver<dim>::initializeCommon()
   ierr = generateA(); CHKERRQ(ierr);
   ierr = generateBNQ(); CHKERRQ(ierr);
   ierr = generateQTBNQ(); CHKERRQ(ierr);
-  ierr = createKSPs(); CHKERRQ(ierr);
   ierr = setNullSpace(); CHKERRQ(ierr);
+  ierr = createKSPs(); CHKERRQ(ierr);
 
   return 0;
 } // initializeCommon
