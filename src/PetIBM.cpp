@@ -27,7 +27,7 @@ int main(int argc,char **argv)
   PetscErrorCode ierr;
   
   ierr = PetscInitialize(&argc, &argv, NULL, NULL); CHKERRQ(ierr);
-  ierr = PetscLogBegin(); CHKERRQ(ierr);
+  ierr = PetscLogDefaultBegin(); CHKERRQ(ierr);
 
   ierr = PetscPrintf(PETSC_COMM_WORLD, "\n======================\n*** PetIBM - Start ***\n======================\n"); CHKERRQ(ierr);
 
