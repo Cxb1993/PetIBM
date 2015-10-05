@@ -1,6 +1,7 @@
 /***************************************************************************//**
  * \file SimulationParameters.h
  * \author Anush Krishnan (anush@bu.edu)
+ * \author Pi-Yueh Chuang (pychuang@gwu.edu)
  * \brief Definition of the class `SimulationParameters`.
  */
 
@@ -47,6 +48,9 @@ public:
   
   TimeIntegration convection, ///< time-scheme for the convection term
                   diffusion;  ///< time-scheme for the diffusion term
+
+  ExecuteType   vSolvType, ///< executing space of velocity solver
+                pSolvType; ///< executing space of pressure solver
 
   // constructors
   SimulationParameters();

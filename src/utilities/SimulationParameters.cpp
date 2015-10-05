@@ -1,6 +1,8 @@
 /***************************************************************************//**
  * \file SimulationParameters.cpp
- * \author Anush Krishnan (anush@bu.edu), Olivier Mesnard (mesnardo@gwu.edu)
+ * \author Anush Krishnan (anush@bu.edu)
+ * \author Olivier Mesnard (mesnardo@gwu.edu)
+ * \author Pi-Yueh Chuang (pychuang@gwu.edu)
  * \brief Implementation of the methods of the class `SimulationParameters`.
  */
 
@@ -58,6 +60,8 @@ void SimulationParameters::initialize(std::string filePath)
   startStep = node["startStep"].as<PetscInt>(0);
   nt = node["nt"].as<PetscInt>();
   nsave = node["nsave"].as<PetscInt>(nt);
+  vSolvType = stringToExecuteType(node["vSolvType"].as<std::string>("CPU"));
+  pSolvType = stringToExecuteType(node["pSolvType"].as<std::string>("CPU"));
 
   ibm = stringToIBMethod(node["ibm"].as<std::string>("NONE"));
 

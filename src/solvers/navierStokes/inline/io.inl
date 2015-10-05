@@ -1,6 +1,8 @@
 /***************************************************************************//**
  * \file io.inl
- * \author Olivier Mesnard (mesnardo@gwu), Anush Krishnan (anush@bu.edu)
+ * \author Anush Krishnan (anush@bu.edu)
+ * \author Olivier Mesnard (mesnardo@gwu)
+ * \author Pi-Yueh Chuang (pychuang@gwu.edu)
  * \brief Implementation of I/O methods of the class NavierStokesSolver.
  */
 
@@ -309,8 +311,9 @@ PetscErrorCode NavierStokesSolver<dim>::writeIterationCounts()
     {
       iterationCountsFile.open(filePath.c_str(), std::ios::out | std::ios::app);
     }
-    ierr = KSPGetIterationNumber(ksp1, &countVelocitySolver); CHKERRQ(ierr);
-    ierr = KSPGetIterationNumber(ksp2, &countPoissonSolver); CHKERRQ(ierr);
+    ierr = getSolverIterations(countVelocitySolver, countPoissonSolver); 
+    CHKERRQ(ierr);
+
     iterationCountsFile << timeStep << '\t' \
                         << countVelocitySolver << '\t' \
                         << countPoissonSolver << std::endl;

@@ -1,7 +1,7 @@
 /**
  * @file class_AmgXSolver.cpp
  * @brief Definition of member functions of the class AmgXSolver
- * @author Pi-Yueh Chuang
+ * @author Pi-Yueh Chuang (pychuang@gwu.edu)
  * @version alpha
  * @date 2015-09-01
  */
@@ -281,7 +281,18 @@ int AmgXSolver::setA(Mat &A)
 
     // deallocate col64 and destroy local matrix
     delete [] col64;
-    ierr = MatDestroy(&lclA);                                     CHKERRQ(ierr);
+
+    // unlink or destroy lclA
+    if (std::strcmp(type, MATSEQAIJ) == 0)
+    {
+        // unlink lclA
+        lclA = nullptr;
+    }
+    else if (std::strcmp(type, MATMPIAIJ) == 0)
+    {
+        // destroy local matrix
+        ierr = MatDestroy(&lclA);                                 CHKERRQ(ierr);
+    }
 
     // bind the matrix A to the solver
     MPI_Barrier(AmgXComm);

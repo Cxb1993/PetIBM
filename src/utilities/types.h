@@ -1,6 +1,7 @@
 /***************************************************************************//**
  * \file types.h
  * \author Anush Krishnan (anush@bu.edu)
+ * \suthor Pi-Yueh Chuang (pychuang@gwu.edu)
  * \brief Definition of enumerated types.
  */
 
@@ -85,6 +86,18 @@ enum IBMethod
 };
 IBMethod stringToIBMethod(std::string s);
 std::string stringFromIBMethod(IBMethod method);
+
+
+/**
+ * @brief Data type describing the executing space of linear solvers
+ */
+enum ExecuteType
+{
+    GPU, ///< GPU-based solver. Currently only AmgX solvers exist.
+    CPU ///< CPU-based solver, i.e. PETSc solvers
+};
+ExecuteType stringToExecuteType(std::string);
+std::string stringFromExecuteType(ExecuteType exeType);
 
 #endif
 

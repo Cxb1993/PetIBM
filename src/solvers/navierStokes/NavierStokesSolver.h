@@ -1,6 +1,7 @@
 /***************************************************************************//**
  * \file NavierStokesSolver.h
  * \author Anush Krishnan (anush@bu.edu)
+ * \author Pi-Yueh Chuang (pychuang@gwu.edu)
  * \brief Definition of the class `NavierStokesSolver`.
  */
 
@@ -27,6 +28,11 @@
 template <PetscInt dim>
 class NavierStokesSolver
 {
+protected:
+
+    PetscMPIInt     rank,
+                    size;
+
 public:
   DM qPack,
      lambdaPack;
@@ -85,8 +91,6 @@ public:
   PetscErrorCode createLocalToGlobalMappingsFluxes();
   // create mapping from local pressure variable to global lambda vector
   PetscErrorCode createLocalToGlobalMappingsLambda();
-  // set up Krylov solvers used to solve linear systems
-  PetscErrorCode createKSPs();
   // populate flux vectors with initial conditions
   virtual PetscErrorCode initializeFluxes();
   // add initial perturbation to velocity field
@@ -128,10 +132,6 @@ public:
 
   // advance in time
   PetscErrorCode stepTime();
-  // solve system for intermediate velocity fluxes \f$ q^* \f$
-  PetscErrorCode solveIntermediateVelocity();
-  // solver Poisson system for pressure and body forces
-  PetscErrorCode solvePoissonSystem();
   // project velocity onto divergence-free field with satisfaction of the no-splip condition
   PetscErrorCode projectionStep();
 
@@ -157,6 +157,64 @@ public:
   // code-development helper: output matrices to files
   PetscErrorCode helperOutputMatrices();
   
+
+  // typedef of member function pointer that points to funcs creating solvers
+  typedef PetscErrorCode (NavierStokesSolver<dim>::*FP_solver)();
+
+  FP_solver  createLinSolver1, ///< mem-func pointer of creating solver1
+             createLinSolver2; ///< mem-func pointer of creating solver2
+
+  // a top level function to invoke creating and initializing of solvers
+  PetscErrorCode createLinSolvers();
+  // set up Krylov solvers used to solve intermediate velocity fluxes
+  PetscErrorCode createKSP1();
+  // set up Krylov solvers used to solve pressure
+  PetscErrorCode createKSP2();
+  // Set up AmgX solvers used to solve intermediate velocity fluxes
+  PetscErrorCode createAmgX1();
+  // Set up AmgX solvers used to solve intermediate velocity fluxes
+  PetscErrorCode createAmgX2();
+  
+
+  // typedef of member function pointer that points to funcs getting iterations
+  typedef PetscErrorCode (NavierStokesSolver<dim>::*FP_getIter)(int &);
+
+  FP_getIter    getSolverIterationsFP1, ///< mem-func pointer of getting iters1
+                getSolverIterationsFP2; ///< mem-func pointer of getting iters2
+
+  // top level function that gets iterations of last solve stage
+  PetscErrorCode getSolverIterations(int &iterSolver1, int &iterSolver2);
+  // function that gets iterations of last solve stage using KSP solver 1
+  PetscErrorCode getSolverIterationsKSP1(int &iterSolver);
+  // function that gets iterations of last solve stage using KSP solver 2
+  PetscErrorCode getSolverIterationsKSP2(int &iterSolver);
+  // function that gets iterations of last solve stage using AmgX solver 1
+  PetscErrorCode getSolverIterationsAmgX1(int &iterSolver);
+  // function that gets iterations of last solve stage using AmgX solver 2
+  PetscErrorCode getSolverIterationsAmgX2(int &iterSolver);
+
+
+  // typedef of member function pointer that points to solving stages
+  typedef PetscErrorCode (NavierStokesSolver<dim>::*FP_solving)();
+
+  FP_solving    solveV, ///< mem-func pointer of solving stage of velocity
+                solveP; ///< mem-func pointer of solving stage of pressure
+
+  // solving intermediate velocity using a KSP solver
+  PetscErrorCode solveV_KSP();
+  // solving pressure using a KSP solver
+  PetscErrorCode solveP_KSP();
+  // solving intermediate velocity using a AmgX solver
+  PetscErrorCode solveV_AmgX();
+  // solving pressure using a AmgX solver
+  PetscErrorCode solveP_AmgX();
+
+  // top level function solving system for intermediate velocity fluxes \f$ q^* \f$
+  PetscErrorCode solveIntermediateVelocity();
+  // top level function solveing Poisson system for pressure and body forces
+  PetscErrorCode solvePoissonSystem();
+
+
 public:
   // constructors
   NavierStokesSolver(){ };

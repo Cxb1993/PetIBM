@@ -1,6 +1,7 @@
 /***************************************************************************//**
  * \file types.cpp
  * \author Olivier Mesnard (mesnardo@gwu.edu)
+ * \author Pi-Yueh Chuang (pychuang@gwu.edu)
  * \brief Implementation of the functions to map enums to strings.
  */
 
@@ -227,3 +228,44 @@ std::string stringFromTimeScheme(TimeScheme scheme)
       break;
   }
 } // stringFromTimeScheme
+
+
+/**
+ * \brief Returns the executing space as an enum.
+ *
+ * \param s string that describes the executing space of solvers.
+ */
+ExecuteType stringToExecuteType(std::string s)
+{
+  if (s == "GPU")
+    return GPU;
+  if (s == "CPU")
+    return CPU;
+  std::cout << "\nERROR: " << s << " - unknown executing space.\n";
+  std::cout << "Acceptable executing spaces:\n";
+  std::cout << "\tGPU\n";
+  std::cout << "\tCPU\n" << std::endl;
+  exit(EXIT_FAILURE);
+} // stringToExecuteType
+
+
+/**
+ * \brief Returns the executing space as a string.
+ *
+ * \param exeType executing space as an enum.
+ */
+std::string stringFromExecuteType(ExecuteType exeType)
+{
+  switch(exeType)
+  {
+    case GPU:
+      return "GPU based linear solvers (currently, AmgX)";
+      break;
+    case CPU:
+      return "CPU based linear solvers (currently, PETSc KSPs)";
+      break;
+    default:
+      return "ERROR";
+      break;
+  }
+} // stringFromExecuteType

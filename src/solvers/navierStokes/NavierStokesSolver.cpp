@@ -1,6 +1,7 @@
 /***************************************************************************//**
  * \file NavierStokesSolver.cpp
  * \author Anush Krishnan (anush@bu.edu)
+ * \author Pi-Yueh Chuang (pychuang@gwu.edu)
  * \brief Implementation of the methods of the class `NavierStokesSolver`.
  */
 
@@ -28,6 +29,9 @@ NavierStokesSolver<dim>::NavierStokesSolver(CartesianMesh *cartesianMesh,
                                             FlowDescription<dim> *flowDescription, 
                                             SimulationParameters *simulationParameters) 
 {
+    MPI_Comm_size(PETSC_COMM_WORLD, &size);
+    MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
+
   // simulation info
   mesh = cartesianMesh;
   flow = flowDescription;
@@ -79,6 +83,42 @@ NavierStokesSolver<dim>::NavierStokesSolver(CartesianMesh *cartesianMesh,
   PetscLogStageRegister("RHSPoisson", &stageRHSPoissonSystem);
   PetscLogStageRegister("solvePoisson", &stageSolvePoissonSystem);
   PetscLogStageRegister("projectionStep", &stageProjectionStep);
+
+  switch(parameters->vSolvType)
+  {
+      case GPU:
+          createLinSolver1 = &NavierStokesSolver<dim>::createAmgX1;
+          solveV = &NavierStokesSolver<dim>::solveV_AmgX;
+          getSolverIterationsFP1 = &NavierStokesSolver<dim>::getSolverIterationsAmgX1;
+          break;
+      case CPU:
+          createLinSolver1 = &NavierStokesSolver<dim>::createKSP1;
+          solveV = &NavierStokesSolver<dim>::solveV_KSP;
+          getSolverIterationsFP1 = &NavierStokesSolver<dim>::getSolverIterationsKSP1;
+          break;
+      default:
+          PetscPrintf(PETSC_COMM_WORLD, 
+                  "Invalid values detected in the vSolvType setting!"); 
+          exit(EXIT_FAILURE);
+  }
+
+  switch(parameters->pSolvType)
+  {
+      case GPU:
+          createLinSolver2 = &NavierStokesSolver<dim>::createAmgX2;
+          solveP = &NavierStokesSolver<dim>::solveP_AmgX;
+          getSolverIterationsFP2 = &NavierStokesSolver<dim>::getSolverIterationsAmgX2;
+          break;
+      case CPU:
+          createLinSolver2 = &NavierStokesSolver<dim>::createKSP2;
+          solveP = &NavierStokesSolver<dim>::solveP_KSP;
+          getSolverIterationsFP2 = &NavierStokesSolver<dim>::getSolverIterationsKSP2;
+          break;
+      default:
+          PetscPrintf(PETSC_COMM_WORLD, 
+                  "Invalid values detected in the pSolvType setting!"); 
+          exit(EXIT_FAILURE);
+  }
 } // NavierStokesSolver
 
 
@@ -125,19 +165,7 @@ PetscErrorCode NavierStokesSolver<dim>::initializeCommon()
   ierr = generateBNQ(); CHKERRQ(ierr);
   ierr = generateQTBNQ(); CHKERRQ(ierr);
   ierr = setNullSpace(); CHKERRQ(ierr);
-  //ierr = createKSPs(); CHKERRQ(ierr);
-
-  int   size, myRank;
-  std::string   amgx_config = parameters->directory + "/solversAmgXOptions.info";
-
-  ierr = MPI_Comm_size(PETSC_COMM_WORLD, &size); CHKERRQ(ierr);
-  ierr = MPI_Comm_rank(PETSC_COMM_WORLD, &myRank); CHKERRQ(ierr);
-
-  amgx1.initialize(PETSC_COMM_WORLD, size, myRank, "dDDI", amgx_config);
-  amgx2.initialize(PETSC_COMM_WORLD, size, myRank, "dDDI", amgx_config);
-
-  amgx1.setA(A);
-  amgx2.setA(QTBNQ);
+  ierr = createLinSolvers(); CHKERRQ(ierr);
 
   return 0;
 } // initializeCommon
@@ -204,24 +232,7 @@ PetscErrorCode NavierStokesSolver<dim>::solveIntermediateVelocity()
 {
   PetscErrorCode ierr;
 
-  ierr = PetscLogStagePush(stageSolveVelocitySystem); CHKERRQ(ierr);
-
-  //ierr = KSPSolve(ksp1, rhs1, qStar); CHKERRQ(ierr);
-  amgx1.solve(qStar, rhs1);
-  
-  ierr = PetscLogStagePop(); CHKERRQ(ierr);
-
-  //KSPConvergedReason reason;
-  //ierr = KSPGetConvergedReason(ksp1, &reason); CHKERRQ(ierr);
-  //if (reason < 0)
-  //{
-  //  ierr = PetscPrintf(PETSC_COMM_WORLD, "\n[time-step %d]", timeStep); CHKERRQ(ierr);
-  //  ierr = PetscPrintf(PETSC_COMM_WORLD,
-  //                     "\nERROR: velocity solver diverged due to reason: %d\n", 
-  //                     reason); CHKERRQ(ierr);
-  //  exit(0);
-  //}
-
+  ierr = (this->*solveV)(); CHKERRQ(ierr);
   return 0;
 } // solveIntermediateVelocity
 
@@ -253,25 +264,8 @@ template <PetscInt dim>
 PetscErrorCode NavierStokesSolver<dim>::solvePoissonSystem()
 {
   PetscErrorCode ierr;
-  
-  ierr = PetscLogStagePush(stageSolvePoissonSystem); CHKERRQ(ierr);
 
-  //ierr = KSPSolve(ksp2, rhs2, lambda); CHKERRQ(ierr);
-  amgx2.solve(lambda, rhs2);
-  
-  ierr = PetscLogStagePop(); CHKERRQ(ierr);
-  
-  //KSPConvergedReason reason;
-  //ierr = KSPGetConvergedReason(ksp2, &reason); CHKERRQ(ierr);
-  //if (reason < 0)
-  //{
-  //  ierr = PetscPrintf(PETSC_COMM_WORLD, "\n[time-step %d]", timeStep); CHKERRQ(ierr);
-  //  ierr = PetscPrintf(PETSC_COMM_WORLD,
-  //                     "\nERROR: Poisson solver diverged due to reason: %d\n", 
-  //                     reason); CHKERRQ(ierr);
-  //  exit(0);
-  //}
-
+  ierr = (this->*solveP)(); CHKERRQ(ierr);
   return 0;
 } // solvePoissonSystem
 
@@ -403,8 +397,8 @@ template <PetscInt dim>
 PetscErrorCode NavierStokesSolver<dim>::finalize()
 {
 
-  amgx1.finalize();
-  amgx2.finalize();
+  if (parameters->vSolvType == GPU) amgx1.finalize();
+  if (parameters->pSolvType == GPU) amgx2.finalize();
 
   PetscErrorCode ierr;
   
@@ -462,7 +456,9 @@ PetscErrorCode NavierStokesSolver<dim>::finalize()
 
 #include "inline/createDMs.inl"
 #include "inline/createVecs.inl"
+#include "inline/createLinSolvers.inl"
 #include "inline/createKSPs.inl"
+#include "inline/createAmgXs.inl"
 #include "inline/setNullSpace.inl"
 #include "inline/createLocalToGlobalMappingsFluxes.inl"
 #include "inline/createLocalToGlobalMappingsLambda.inl"
@@ -477,6 +473,8 @@ PetscErrorCode NavierStokesSolver<dim>::finalize()
 #include "inline/generateBNQ.inl"
 #include "inline/generateR2.inl"
 #include "inline/io.inl"
+#include "inline/solveVP.inl"
+#include "inline/getSolverIterations.inl"
 
 
 // template class specialization
