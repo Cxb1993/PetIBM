@@ -26,7 +26,7 @@ PetscErrorCode NavierStokesSolver<dim>::createKSP1()
   std::string       petscOptionsFile = 
       parameters->directory + "/solversPetscOptions.info";
 
-  ierr = PetscOptionsInsertFile(PETSC_COMM_WORLD, 
+  ierr = PetscOptionsInsertFile(PETSC_COMM_WORLD, nullptr,
           petscOptionsFile.c_str(), PETSC_FALSE); CHKERRQ(ierr);
 
   // create KSP for intermaediate fluxes system
@@ -71,7 +71,7 @@ PetscErrorCode NavierStokesSolver<dim>::createKSP2()
   std::string       petscOptionsFile = 
       parameters->directory + "/solversPetscOptions.info";
 
-  ierr = PetscOptionsInsertFile(PETSC_COMM_WORLD, 
+  ierr = PetscOptionsInsertFile(PETSC_COMM_WORLD, nullptr,
           petscOptionsFile.c_str(), PETSC_FALSE); CHKERRQ(ierr);
 
   // create KSP for Poisson system
