@@ -31,7 +31,7 @@ AC_MSG_CHECKING([for version of OpenMPI])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <mpi.h>
 
-# define CHECK (OMPI_MAJOR_VERSION == 1 && OMPI_MINOR_VERSION == 8)
+# define CHECK (OMPI_MAJOR_VERSION >= 1 && OMPI_MINOR_VERSION >= 8)
 ]], [[
 #if (CHECK)
 #else
@@ -40,7 +40,7 @@ asdf
 ]])], [OMPI_VERSION=yes], [OMPI_VERSION=no])
 AC_MSG_RESULT([${OMPI_VERSION}])
 if test "$OMPI_VERSION" = no; then
-  AC_MSG_ERROR([OpenMPI is not 1.8!! AmgX currently only accept OpenMPI 1.8.])
+  AC_MSG_ERROR([OpenMPI is not larger than 1.8!! AmgX currently only accept OpenMPI 1.8.])
 fi
 
 PACKAGE_RESTORE_ENVIRONMENT
