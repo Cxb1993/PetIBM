@@ -1,6 +1,6 @@
 noinst_LIBRARIES = libutilities.a
 
-libutilities_a_SOURCES = AmgXSolver.cpp \
+libutilities_a_SOURCES = AmgXWrapper/src/AmgXSolver.cpp \
 			 CartesianMesh.cpp \
                          FlowDescription.cpp \
                          SimulationParameters.cpp \

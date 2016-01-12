@@ -9,6 +9,7 @@ diffusiveTermTest2d_SOURCES = DiffusiveTerm.cpp \
 diffusiveTermTest2d_DEPENDENCIES = input_data
 
 diffusiveTermTest2d_CPPFLAGS = -I$(top_srcdir)/src/utilities \
+			    -I$(top_srcdir)/src/utilities/AmgXWrapper/src \
 															 -I$(top_srcdir)/src/solvers \
 															 -D DIMENSIONS=2
 
@@ -22,6 +23,7 @@ diffusiveTermTest3d_SOURCES = DiffusiveTerm.cpp \
 diffusiveTermTest3d_DEPENDENCIES = input_data
 
 diffusiveTermTest3d_CPPFLAGS = -I$(top_srcdir)/src/utilities \
+			    -I$(top_srcdir)/src/utilities/AmgXWrapper/src \
 															 -I$(top_srcdir)/src/solvers \
 															 -D DIMENSIONS=3
 

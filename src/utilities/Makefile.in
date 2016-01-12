@@ -110,7 +110,9 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libutilities_a_AR = $(AR) $(ARFLAGS)
 libutilities_a_LIBADD =
-am_libutilities_a_OBJECTS = libutilities_a-AmgXSolver.$(OBJEXT) \
+am__dirstamp = $(am__leading_dot)dirstamp
+am_libutilities_a_OBJECTS =  \
+	AmgXWrapper/src/libutilities_a-AmgXSolver.$(OBJEXT) \
 	libutilities_a-CartesianMesh.$(OBJEXT) \
 	libutilities_a-FlowDescription.$(OBJEXT) \
 	libutilities_a-SimulationParameters.$(OBJEXT) \
@@ -286,7 +288,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 noinst_LIBRARIES = libutilities.a
-libutilities_a_SOURCES = AmgXSolver.cpp \
+libutilities_a_SOURCES = AmgXWrapper/src/AmgXSolver.cpp \
 			 CartesianMesh.cpp \
                          FlowDescription.cpp \
                          SimulationParameters.cpp \
@@ -332,6 +334,15 @@ $(am__aclocal_m4_deps):
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+AmgXWrapper/src/$(am__dirstamp):
+	@$(MKDIR_P) AmgXWrapper/src
+	@: > AmgXWrapper/src/$(am__dirstamp)
+AmgXWrapper/src/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) AmgXWrapper/src/$(DEPDIR)
+	@: > AmgXWrapper/src/$(DEPDIR)/$(am__dirstamp)
+AmgXWrapper/src/libutilities_a-AmgXSolver.$(OBJEXT):  \
+	AmgXWrapper/src/$(am__dirstamp) \
+	AmgXWrapper/src/$(DEPDIR)/$(am__dirstamp)
 
 libutilities.a: $(libutilities_a_OBJECTS) $(libutilities_a_DEPENDENCIES) $(EXTRA_libutilities_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libutilities.a
@@ -340,16 +351,17 @@ libutilities.a: $(libutilities_a_OBJECTS) $(libutilities_a_DEPENDENCIES) $(EXTRA
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f AmgXWrapper/src/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libutilities_a-AmgXSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libutilities_a-Body.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libutilities_a-CartesianMesh.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libutilities_a-FlowDescription.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libutilities_a-SimulationParameters.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libutilities_a-types.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@AmgXWrapper/src/$(DEPDIR)/libutilities_a-AmgXSolver.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -367,19 +379,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-libutilities_a-AmgXSolver.o: AmgXSolver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libutilities_a-AmgXSolver.o -MD -MP -MF $(DEPDIR)/libutilities_a-AmgXSolver.Tpo -c -o libutilities_a-AmgXSolver.o `test -f 'AmgXSolver.cpp' || echo '$(srcdir)/'`AmgXSolver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libutilities_a-AmgXSolver.Tpo $(DEPDIR)/libutilities_a-AmgXSolver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='AmgXSolver.cpp' object='libutilities_a-AmgXSolver.o' libtool=no @AMDEPBACKSLASH@
+AmgXWrapper/src/libutilities_a-AmgXSolver.o: AmgXWrapper/src/AmgXSolver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AmgXWrapper/src/libutilities_a-AmgXSolver.o -MD -MP -MF AmgXWrapper/src/$(DEPDIR)/libutilities_a-AmgXSolver.Tpo -c -o AmgXWrapper/src/libutilities_a-AmgXSolver.o `test -f 'AmgXWrapper/src/AmgXSolver.cpp' || echo '$(srcdir)/'`AmgXWrapper/src/AmgXSolver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) AmgXWrapper/src/$(DEPDIR)/libutilities_a-AmgXSolver.Tpo AmgXWrapper/src/$(DEPDIR)/libutilities_a-AmgXSolver.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='AmgXWrapper/src/AmgXSolver.cpp' object='AmgXWrapper/src/libutilities_a-AmgXSolver.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libutilities_a-AmgXSolver.o `test -f 'AmgXSolver.cpp' || echo '$(srcdir)/'`AmgXSolver.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AmgXWrapper/src/libutilities_a-AmgXSolver.o `test -f 'AmgXWrapper/src/AmgXSolver.cpp' || echo '$(srcdir)/'`AmgXWrapper/src/AmgXSolver.cpp
 
-libutilities_a-AmgXSolver.obj: AmgXSolver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libutilities_a-AmgXSolver.obj -MD -MP -MF $(DEPDIR)/libutilities_a-AmgXSolver.Tpo -c -o libutilities_a-AmgXSolver.obj `if test -f 'AmgXSolver.cpp'; then $(CYGPATH_W) 'AmgXSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/AmgXSolver.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libutilities_a-AmgXSolver.Tpo $(DEPDIR)/libutilities_a-AmgXSolver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='AmgXSolver.cpp' object='libutilities_a-AmgXSolver.obj' libtool=no @AMDEPBACKSLASH@
+AmgXWrapper/src/libutilities_a-AmgXSolver.obj: AmgXWrapper/src/AmgXSolver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AmgXWrapper/src/libutilities_a-AmgXSolver.obj -MD -MP -MF AmgXWrapper/src/$(DEPDIR)/libutilities_a-AmgXSolver.Tpo -c -o AmgXWrapper/src/libutilities_a-AmgXSolver.obj `if test -f 'AmgXWrapper/src/AmgXSolver.cpp'; then $(CYGPATH_W) 'AmgXWrapper/src/AmgXSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/AmgXWrapper/src/AmgXSolver.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) AmgXWrapper/src/$(DEPDIR)/libutilities_a-AmgXSolver.Tpo AmgXWrapper/src/$(DEPDIR)/libutilities_a-AmgXSolver.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='AmgXWrapper/src/AmgXSolver.cpp' object='AmgXWrapper/src/libutilities_a-AmgXSolver.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libutilities_a-AmgXSolver.obj `if test -f 'AmgXSolver.cpp'; then $(CYGPATH_W) 'AmgXSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/AmgXSolver.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AmgXWrapper/src/libutilities_a-AmgXSolver.obj `if test -f 'AmgXWrapper/src/AmgXSolver.cpp'; then $(CYGPATH_W) 'AmgXWrapper/src/AmgXSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/AmgXWrapper/src/AmgXSolver.cpp'; fi`
 
 libutilities_a-CartesianMesh.o: CartesianMesh.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libutilities_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libutilities_a-CartesianMesh.o -MD -MP -MF $(DEPDIR)/libutilities_a-CartesianMesh.Tpo -c -o libutilities_a-CartesianMesh.o `test -f 'CartesianMesh.cpp' || echo '$(srcdir)/'`CartesianMesh.cpp
@@ -563,6 +575,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f AmgXWrapper/src/$(DEPDIR)/$(am__dirstamp)
+	-rm -f AmgXWrapper/src/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -572,7 +586,7 @@ clean: clean-am
 clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) AmgXWrapper/src/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -618,7 +632,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) AmgXWrapper/src/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

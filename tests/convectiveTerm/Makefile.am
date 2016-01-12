@@ -9,6 +9,7 @@ convectiveTermTest2d_SOURCES = ConvectiveTerm.cpp \
 convectiveTermTest2d_DEPENDENCIES = input_data
 
 convectiveTermTest2d_CPPFLAGS = -I$(top_srcdir)/src/utilities \
+			    -I$(top_srcdir)/src/utilities/AmgXWrapper/src \
 																-I$(top_srcdir)/src/solvers \
 																-D DIMENSIONS=2
 
@@ -22,6 +23,7 @@ convectiveTermTest3d_SOURCES = ConvectiveTerm.cpp \
 convectiveTermTest3d_DEPENDENCIES = input_data
 
 convectiveTermTest3d_CPPFLAGS = -I$(top_srcdir)/src/utilities \
+			    -I$(top_srcdir)/src/utilities/AmgXWrapper/src \
 																-I$(top_srcdir)/src/solvers \
 																-D DIMENSIONS=3
 

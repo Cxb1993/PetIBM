@@ -6,6 +6,7 @@ bin_PROGRAMS = petibm2d \
 petibm2d_SOURCES = PetIBM.cpp
 
 petibm2d_CPPFLAGS = -I$(srcdir)/utilities \
+                    -I$(srcdir)/utilities/AmgXWrapper/src \
                     -I$(srcdir)/solvers \
                     -D DIMENSIONS=2
 
@@ -17,6 +18,7 @@ petibm3d_SOURCES = PetIBM.cpp
 
 petibm3d_CPPFLAGS = -I$(srcdir)/utilities \
                     -I$(srcdir)/solvers \
+                    -I$(srcdir)/utilities/AmgXWrapper/src \
                     -D DIMENSIONS=3
 
 petibm3d_LDADD = solvers/libsolvers.a \
