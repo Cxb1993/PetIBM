@@ -22,7 +22,7 @@ PetscErrorCode NavierStokesSolver<dim>::createAmgX1()
       parameters->directory + "/solversAmgXOptions_v.info";
 
   // create KSP for intermaediate fluxes system
-  amgx1.initialize(PETSC_COMM_WORLD, size, rank, "dDDI", AmgXOptionsFile);
+  amgx1.initialize(PETSC_COMM_WORLD, "dDDI", AmgXOptionsFile);
 
   amgx1.setA(A);
 
@@ -45,7 +45,7 @@ PetscErrorCode NavierStokesSolver<dim>::createAmgX2()
       parameters->directory + "/solversAmgXOptions_p.info";
 
   // create KSP for intermaediate fluxes system
-  amgx2.initialize(PETSC_COMM_WORLD, size, rank, "dDDI", AmgXOptionsFile);
+  amgx2.initialize(PETSC_COMM_WORLD, "dDDI", AmgXOptionsFile);
 
   amgx2.setA(QTBNQ);
 
