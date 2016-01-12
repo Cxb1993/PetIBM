@@ -49,8 +49,8 @@ public:
   TimeIntegration convection, ///< time-scheme for the convection term
                   diffusion;  ///< time-scheme for the diffusion term
 
-  ExecuteType   vSolvType, ///< executing space of velocity solver
-                pSolvType; ///< executing space of pressure solver
+  ExecuteType   vSolveType, ///< executing space of velocity solver
+                pSolveType; ///< executing space of pressure solver
 
   // constructors
   SimulationParameters();

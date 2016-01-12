@@ -84,7 +84,7 @@ NavierStokesSolver<dim>::NavierStokesSolver(CartesianMesh *cartesianMesh,
   PetscLogStageRegister("solvePoisson", &stageSolvePoissonSystem);
   PetscLogStageRegister("projectionStep", &stageProjectionStep);
 
-  switch(parameters->vSolvType)
+  switch(parameters->vSolveType)
   {
       case GPU:
           createLinSolver1 = &NavierStokesSolver<dim>::createAmgX1;
@@ -98,11 +98,11 @@ NavierStokesSolver<dim>::NavierStokesSolver(CartesianMesh *cartesianMesh,
           break;
       default:
           PetscPrintf(PETSC_COMM_WORLD, 
-                  "Invalid values detected in the vSolvType setting!"); 
+                  "Invalid values detected in the vSolveType setting!"); 
           exit(EXIT_FAILURE);
   }
 
-  switch(parameters->pSolvType)
+  switch(parameters->pSolveType)
   {
       case GPU:
           createLinSolver2 = &NavierStokesSolver<dim>::createAmgX2;
@@ -116,7 +116,7 @@ NavierStokesSolver<dim>::NavierStokesSolver(CartesianMesh *cartesianMesh,
           break;
       default:
           PetscPrintf(PETSC_COMM_WORLD, 
-                  "Invalid values detected in the pSolvType setting!"); 
+                  "Invalid values detected in the pSolveType setting!"); 
           exit(EXIT_FAILURE);
   }
 } // NavierStokesSolver
@@ -397,8 +397,8 @@ template <PetscInt dim>
 PetscErrorCode NavierStokesSolver<dim>::finalize()
 {
 
-  if (parameters->vSolvType == GPU) amgx1.finalize();
-  if (parameters->pSolvType == GPU) amgx2.finalize();
+  if (parameters->vSolveType == GPU) amgx1.finalize();
+  if (parameters->pSolveType == GPU) amgx2.finalize();
 
   PetscErrorCode ierr;
   

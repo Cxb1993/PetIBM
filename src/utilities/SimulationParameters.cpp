@@ -60,8 +60,8 @@ void SimulationParameters::initialize(std::string filePath)
   startStep = node["startStep"].as<PetscInt>(0);
   nt = node["nt"].as<PetscInt>();
   nsave = node["nsave"].as<PetscInt>(nt);
-  vSolvType = stringToExecuteType(node["vSolvType"].as<std::string>("CPU"));
-  pSolvType = stringToExecuteType(node["pSolvType"].as<std::string>("CPU"));
+  vSolveType = stringToExecuteType(node["vSolveType"].as<std::string>("CPU"));
+  pSolveType = stringToExecuteType(node["pSolveType"].as<std::string>("CPU"));
 
   ibm = stringToIBMethod(node["ibm"].as<std::string>("NONE"));
 
