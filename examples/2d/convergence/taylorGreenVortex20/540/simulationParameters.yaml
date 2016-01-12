@@ -6,3 +6,5 @@
   nsave: 100
   convection: EULER_EXPLICIT
   diffusion: EULER_IMPLICIT
+  vSolveType: CPU 
+  pSolveType: CPU
