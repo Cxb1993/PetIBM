@@ -10,12 +10,12 @@ pcgf:max_iters=20000
 pcgf:convergence=ABSOLUTE
 pcgf:tolerance=1e-8
 pcgf:norm=L2
-pcgf:print_solve_stats=1
+pcgf:print_solve_stats=0
 pcgf:monitor_residual=1
-pcgf:obtain_timings=1
+pcgf:obtain_timings=0
 
 prec:error_scaling=0
-prec:print_grid_stats=1
+prec:print_grid_stats=0
 prec:max_iters=1
 prec:cycle=V
 prec:min_coarse_rows=2
