@@ -251,3 +251,35 @@ memoryCheck3dParallel:
 	@$(MPIEXEC) -n 2 valgrind \
 							--tool=memcheck --leak-check=full --show-reachable=yes --track-origins=yes \
 							$(PETIBM3D) -directory ./3d/memoryTest							
+	
+# GPU examples
+
+lidDrivenCavity2dRe5000GPU:
+	@echo "======================================================================"
+	@echo "2d lid-driven cavity flow at Re=5000 using 4 processes and AmgX solver"
+	@echo "======================================================================"
+	@$(MPIEXEC) -n 4 $(PETIBM2D) -directory ./GPU/2d/lidDrivenCavity/Re5000
+
+cylinder2dRe40:
+	@echo "================================================================"
+	@echo "2d flow over cylinder at Re=40 using 2 processes and AmgX solver"
+	@echo "================================================================"
+	@$(MPIEXEC) -n 2 $(PETIBM2D) -directory ./GPU/2d/cylinder/Re40
+
+cylinder2dRe550:
+	@echo "================================================================="
+	@echo "2d flow over cylinder at Re=550 using 4 processes and AmgX solver"
+	@echo "================================================================="
+	@$(MPIEXEC) -n 4 $(PETIBM2D) -directory ./GPU/2d/cylinder/Re550
+
+cylinder2dRe3000:
+	@echo "=================================================================="
+	@echo "2d flow over cylinder at Re=3000 using 4 processes and AmgX solver"
+	@echo "=================================================================="
+	@$(MPIEXEC) -n 4 $(PETIBM2D) -directory ./GPU/2d/cylinder/Re3000
+
+cylinder3dRe40:
+	@echo "================================================================"
+	@echo "3d flow over cylinder at Re=40 using 4 processes and AmgX solver"
+	@echo "================================================================"
+	@$(MPIEXEC) -n 4 $(PETIBM3D) -directory ./GPU/3d/cylinder/Re40
