@@ -26,8 +26,8 @@ PetscErrorCode TairaColoniusSolver<2>::generateBNQ()
            mstart, nstart; // starting indices
   
   PetscInt localIdx, procIdx;
-  PetscInt row, cols[2], BNQ_col, ET_col, value;
-  PetscReal values[2] = {-1.0, 1.0};
+  PetscInt row, cols[2], BNQ_col, ET_col;
+  PetscReal values[2] = {-1.0, 1.0}, value;
   PetscReal disp[2];
   PetscReal xCoord, yCoord, h;
   
@@ -283,8 +283,8 @@ PetscErrorCode TairaColoniusSolver<3>::generateBNQ()
            mstart, nstart, pstart; // starting indices
 
   PetscInt localIdx, procIdx;
-  PetscInt row, cols[2], BNQ_col, ET_col, value;
-  PetscReal values[2] = {-1.0, 1.0};
+  PetscInt row, cols[2], BNQ_col, ET_col;
+  PetscReal values[2] = {-1.0, 1.0}, value;
   PetscReal disp[3];
   PetscReal xCoord, yCoord, zCoord, h;
   
