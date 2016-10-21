@@ -35,7 +35,7 @@ PetscErrorCode NavierStokesSolver<dim>::createKSPs()
 
   // file with KSP options
   std::string petscOptionsFile= parameters->directory + "/solversPetscOptions.info";
-  ierr = PetscOptionsInsertFile(PETSC_COMM_WORLD, NULL, 
+  ierr = PetscOptionsInsertFile(PETSC_COMM_WORLD,
                                 petscOptionsFile.c_str(), PETSC_FALSE); CHKERRQ(ierr);
 
   // create KSP for intermaediate fluxes system
